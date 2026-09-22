@@ -3,36 +3,1320 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Site</title>
+  <title>Sportle — Daily NFL History Guessing Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-    }
-    .container {
-      background-color: white;
-      padding: 40px 60px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      color: #333;
-    }
-    p {
-      color: #666;
-    }
+/* ============================================================================
+   SPORTLE — STYLES
+   Palette: navy primary, red accent, white background, light gray secondary.
+   ============================================================================ */
+
+:root {
+  --navy: #0B1F3A;
+  --navy-light: #16305A;
+  --red: #C8102E;
+  --red-dark: #A50D26;
+  --white: #FFFFFF;
+  --gray-bg: #F4F5F7;
+  --gray-mid: #E1E4E9;
+  --gray-border: #D9DCE1;
+  --text-secondary: #55606E;
+
+  --font-logo: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  --font-heading: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+
+  --radius: 12px;
+  --shadow: 0 2px 10px rgba(11, 31, 58, 0.08);
+  --shadow-lg: 0 8px 28px rgba(11, 31, 58, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--navy);
+  background: var(--gray-bg);
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------
+   SCREENS
+   --------------------------------------------------------------------- */
+.screen {
+  display: none;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.screen.active {
+  display: block;
+}
+
+/* ---------------------------------------------------------------------
+   BUTTONS
+   --------------------------------------------------------------------- */
+.btn {
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--red);
+  color: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--red-dark);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn-primary:disabled {
+  background: var(--gray-mid);
+  color: #9AA3AF;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--navy);
+  border: 2px solid var(--gray-border);
+  position: relative;
+}
+
+.btn-secondary:disabled {
+  color: #9AA3AF;
+  cursor: not-allowed;
+}
+
+.btn-large {
+  padding: 18px 36px;
+  font-size: 18px;
+  letter-spacing: 1px;
+  font-family: var(--font-heading);
+}
+
+.btn-text {
+  background: none;
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 16px;
+  text-decoration: underline;
+}
+
+.btn-text:hover {
+  color: var(--navy);
+}
+
+.btn-submit.active {
+  background: var(--red);
+}
+
+.coming-soon {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ---------------------------------------------------------------------
+   HOME SCREEN
+   --------------------------------------------------------------------- */
+.home-content {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 14vh 24px 40px;
+  text-align: center;
+}
+
+.logo {
+  font-family: var(--font-logo);
+  font-size: 88px;
+  letter-spacing: 4px;
+  color: var(--navy);
+  line-height: 1;
+}
+
+.tagline {
+  margin-top: 18px;
+  font-size: 18px;
+  color: var(--text-secondary);
+}
+
+.home-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 48px;
+  flex-wrap: wrap;
+}
+
+.home-buttons .btn {
+  min-width: 220px;
+}
+
+.daily-status {
+  margin-top: 24px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ---------------------------------------------------------------------
+   ROUND SCREEN
+   --------------------------------------------------------------------- */
+.round-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: var(--navy);
+  color: var(--white);
+  flex-wrap: wrap;
+}
+
+.logo-small {
+  font-family: var(--font-logo);
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+.round-header .tag {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  letter-spacing: 1px;
+  background: var(--red);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.round-indicator {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: #C7D2E3;
+}
+
+.progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 0 0;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--gray-mid);
+}
+
+.dot-done {
+  background: var(--red);
+}
+
+.dot-current {
+  background: var(--navy);
+  transform: scale(1.2);
+}
+
+.fallback-notice {
+  max-width: 720px;
+  margin: 16px auto 0;
+  padding: 10px 16px;
+  background: #FFF6E5;
+  border: 1px solid #F0D9A6;
+  color: #7A5B10;
+  border-radius: 8px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.photo-wrap {
+  max-width: 880px;
+  margin: 24px auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.photo-wrap img {
+  width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  background: var(--navy);
+}
+
+.guess-panel, .reveal-panel {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 8px 24px 60px;
+}
+
+.slider-group {
+  background: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  color: var(--text-secondary);
+}
+
+.slider-value {
+  font-family: var(--font-heading);
+  font-size: 30px;
+  color: var(--navy);
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--gray-mid);
+  outline: none;
+  margin: 8px 0;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--red);
+  border: 3px solid var(--white);
+  box-shadow: 0 1px 4px rgba(11, 31, 58, 0.35);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--red);
+  border: 3px solid var(--white);
+  box-shadow: 0 1px 4px rgba(11, 31, 58, 0.35);
+  cursor: pointer;
+}
+
+.slider:disabled::-webkit-slider-thumb {
+  background: #9AA3AF;
+  cursor: not-allowed;
+}
+
+.slider-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.btn-submit {
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Reveal panel */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.comparison-card {
+  background: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+}
+
+.comparison-card h3 {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.comparison-card p {
+  font-size: 15px;
+  margin-top: 6px;
+}
+
+.comparison-card-answer {
+  border-color: var(--red);
+  background: #FFF5F6;
+}
+
+.score-breakdown {
+  background: var(--navy);
+  color: var(--white);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+}
+
+.score-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.score-item:last-child {
+  border-bottom: none;
+}
+
+.score-label {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #C7D2E3;
+}
+
+.score-value {
+  font-family: var(--font-heading);
+  font-size: 20px;
+}
+
+.score-item-total .score-label,
+.score-item-total .score-value {
+  color: var(--white);
+  font-size: 24px;
+}
+
+.info-section {
+  background: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+}
+
+.info-section h4 {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--red);
+  margin-bottom: 6px;
+}
+
+.info-section h4:not(:first-child) {
+  margin-top: 16px;
+}
+
+.info-section p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--navy);
+}
+
+/* ---------------------------------------------------------------------
+   RESULTS SCREEN
+   --------------------------------------------------------------------- */
+.results-content {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 24px 60px;
+  text-align: center;
+}
+
+.results-puzzle-label {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.results-heading {
+  margin-top: 36px;
+  font-size: 15px;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+}
+
+.results-total {
+  font-family: var(--font-heading);
+  font-size: 56px;
+  color: var(--navy);
+  margin-top: 8px;
+}
+
+.recap-list {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.recap-card {
+  background: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  box-shadow: var(--shadow);
+}
+
+.recap-card-top {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--navy);
+}
+
+.recap-bar {
+  height: 6px;
+  background: var(--gray-mid);
+  border-radius: 999px;
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+.recap-bar-fill {
+  height: 100%;
+  background: var(--red);
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+
+.recap-card-detail {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.results-actions {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-share.copied {
+  background: var(--navy);
+}
+
+/* ---------------------------------------------------------------------
+   RESPONSIVE (baseline — desktop-first, not fully optimized yet)
+   --------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .logo {
+    font-size: 60px;
+  }
+
+  .home-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .results-total {
+    font-size: 42px;
+  }
+}
+
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Hello, World</h1>
-    <p>This site is live and connected to my domain.</p>
-  </div>
+
+  <!-- ============================= HOME ============================= -->
+  <section id="screen-home" class="screen active">
+    <div class="home-content">
+      <h1 class="logo">SPORTLE</h1>
+      <p class="tagline">How well do you know NFL history?</p>
+
+      <div class="home-buttons">
+        <button id="btn-daily" class="btn btn-primary btn-large">DAILY</button>
+        <button id="btn-freeplay" class="btn btn-secondary btn-large" disabled>
+          FREE PLAY
+          <span class="coming-soon">Coming Soon</span>
+        </button>
+      </div>
+
+      <p id="daily-status" class="daily-status"></p>
+    </div>
+  </section>
+
+  <!-- ============================= ROUND ============================= -->
+  <section id="screen-round" class="screen">
+    <header class="round-header">
+      <span class="logo-small">SPORTLE</span>
+      <span class="tag">DAILY</span>
+      <span id="round-indicator" class="round-indicator">ROUND 1 OF 5</span>
+    </header>
+
+    <div id="progress-dots" class="progress-dots"></div>
+
+    <p id="fallback-notice" class="fallback-notice" hidden>
+      Today's puzzle hasn't been published yet — showing a placeholder puzzle in the meantime.
+    </p>
+
+    <div class="photo-wrap">
+      <img id="round-photo" src="" alt="NFL photograph">
+    </div>
+
+    <!-- Guess controls (visible before submit) -->
+    <div id="guess-panel" class="guess-panel">
+      <div class="slider-group">
+        <div class="slider-label-row">
+          <span class="slider-label">YEAR</span>
+          <span id="year-value" class="slider-value"></span>
+        </div>
+        <input type="range" id="year-slider" class="slider" min="1890" max="2026" step="1">
+        <div class="slider-range-labels"><span>1890</span><span>2026</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label-row">
+          <span class="slider-label">TOTAL POINTS</span>
+          <span id="points-value" class="slider-value"></span>
+        </div>
+        <input type="range" id="points-slider" class="slider" min="0" max="120" step="1">
+        <div class="slider-range-labels"><span>0</span><span>120</span></div>
+      </div>
+
+      <button id="btn-submit" class="btn btn-primary btn-large btn-submit" disabled>SUBMIT GUESS</button>
+    </div>
+
+    <!-- Reveal panel (hidden until submit) -->
+    <div id="reveal-panel" class="reveal-panel" hidden>
+      <div class="comparison-grid">
+        <div class="comparison-card">
+          <h3>YOUR GUESS</h3>
+          <p>Year: <strong id="guess-year-out"></strong></p>
+          <p>Total Points: <strong id="guess-points-out"></strong></p>
+        </div>
+        <div class="comparison-card comparison-card-answer">
+          <h3>CORRECT ANSWER</h3>
+          <p>Year: <strong id="answer-year-out"></strong></p>
+          <p>Total Points: <strong id="answer-points-out"></strong></p>
+        </div>
+      </div>
+
+      <div class="score-breakdown">
+        <div class="score-item">
+          <span class="score-label">YEAR SCORE</span>
+          <span class="score-value"><span id="year-score-out">0</span> / 1,000</span>
+        </div>
+        <div class="score-item">
+          <span class="score-label">POINTS SCORE</span>
+          <span class="score-value"><span id="points-score-out">0</span> / 1,000</span>
+        </div>
+        <div class="score-item score-item-total">
+          <span class="score-label">ROUND SCORE</span>
+          <span class="score-value"><span id="round-score-out">0</span> / 2,000</span>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h4>ABOUT THE GAME</h4>
+        <p id="game-description-out"></p>
+        <h4>FUN FACT</h4>
+        <p id="fun-fact-out"></p>
+      </div>
+
+      <button id="btn-next" class="btn btn-primary btn-large">NEXT ROUND →</button>
+    </div>
+  </section>
+
+  <!-- ============================= RESULTS ============================= -->
+  <section id="screen-results" class="screen">
+    <div class="results-content">
+      <span class="logo-small">SPORTLE</span>
+      <p id="results-puzzle-label" class="results-puzzle-label"></p>
+
+      <h2 class="results-heading">YOUR DAILY SCORE</h2>
+      <div class="results-total"><span id="results-total">0</span> / 10,000</div>
+
+      <div id="recap-list" class="recap-list"></div>
+
+      <div class="results-actions">
+        <button id="btn-share" class="btn btn-primary btn-large">SHARE SCORE</button>
+        <button id="btn-home" class="btn btn-text">BACK TO HOME</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+/**
+ * ============================================================================
+ * SPORTLE — DAILY PUZZLE CONTENT
+ * ============================================================================
+ * This is the ONLY file you need to edit to publish a new Daily puzzle.
+ * The game engine (app.js) never needs to change when you update this file.
+ *
+ * HOW TO ADD A NEW DAY:
+ * 1. Pick a calendar date and add a new key in "YYYY-MM-DD" format to
+ *    SPORTLE_DAILY_PUZZLES below.
+ * 2. Give it an array of EXACTLY 5 round objects (see shape below).
+ * 3. Save the file. That's it — no other code changes are required.
+ *
+ * ROUND OBJECT SHAPE:
+ * {
+ *   image:           string  - path or URL to the photograph
+ *   year:             number  - the year the photo was taken (1890-2026)
+ *   totalScore:       number  - combined final score of BOTH teams (0-120)
+ *   gameDescription:  string  - 1-3 sentence description of the game
+ *   funFact:          string  - a short, fun piece of context/trivia
+ * }
+ *
+ * IMAGES:
+ * Put your photo files in the /images folder and reference them by
+ * relative path (e.g. "images/2003-super-bowl.jpg"), or point "image" at
+ * any publicly reachable image URL. Every photo below is a labeled
+ * PLACEHOLDER — swap these for real NFL photographs whenever you're ready.
+ *
+ * SEE README.md for the full walkthrough.
+ * ============================================================================
+ */
+
+// Used only to compute the "Daily Puzzle #" shown in the UI. Change this if
+// you want puzzle numbering to start counting from a different date.
+const SPORTLE_LAUNCH_DATE = "2026-09-22";
+
+const SPORTLE_DAILY_PUZZLES = {
+  "2026-09-22": [
+    {
+      image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCIgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzEiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzE2MzA1QSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwQjFGM0EiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjgwMCIgZmlsbD0idXJsKCNnMSkiLz4KICA8ZyBzdHJva2U9IiMyQzRBNzgiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC42Ij4KICAgIDxsaW5lIHgxPSIwIiB5MT0iMTUwIiB4Mj0iMTIwMCIgeTI9IjE1MCIvPgogICAgPGxpbmUgeDE9IjAiIHkxPSIzMDAiIHgyPSIxMjAwIiB5Mj0iMzAwIi8+CiAgICA8bGluZSB4MT0iMCIgeTE9IjQ1MCIgeDI9IjEyMDAiIHkyPSI0NTAiLz4KICAgIDxsaW5lIHgxPSIwIiB5MT0iNjAwIiB4Mj0iMTIwMCIgeTI9IjYwMCIvPgogICAgPGxpbmUgeDE9IjE1MCIgeTE9IjAiIHgyPSIxNTAiIHkyPSI4MDAiLz4KICAgIDxsaW5lIHgxPSI0MDAiIHkxPSIwIiB4Mj0iNDAwIiB5Mj0iODAwIi8+CiAgICA8bGluZSB4MT0iODAwIiB5MT0iMCIgeDI9IjgwMCIgeTI9IjgwMCIvPgogICAgPGxpbmUgeDE9IjEwNTAiIHkxPSIwIiB4Mj0iMTA1MCIgeTI9IjgwMCIvPgogIDwvZz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2MDAsMzMwKSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjQzgxMDJFIiBzdHJva2Utd2lkdGg9IjEwIiBvcGFjaXR5PSIwLjg1Ij4KICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iMCIgcng9IjkwIiByeT0iNTUiLz4KICAgIDxsaW5lIHgxPSItOTAiIHkxPSIwIiB4Mj0iOTAiIHkyPSIwIi8+CiAgPC9nPgogIDx0ZXh0IHg9IjYwMCIgeT0iNDcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiIgbGV0dGVyLXNwYWNpbmc9IjIiPlBMQUNFSE9MREVSIFBIT1RPIOKAlCBST1VORCAxPC90ZXh0PgogIDx0ZXh0IHg9IjYwMCIgeT0iNTE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iI0FFQjlDQyI+UmVwbGFjZSB2aWEgZGF0YS5qcyDigJQgc2VlIFJFQURNRS5tZDwvdGV4dD4KPC9zdmc+Cg==",
+      year: 2003,
+      totalScore: 47,
+      gameDescription:
+        "PLACEHOLDER CONTENT — Super Bowl XXXVII was played at Qualcomm Stadium in San Diego, where Tampa Bay defeated Oakland 48–21.",
+      funFact:
+        "PLACEHOLDER CONTENT — Brad Johnson became one of the few quarterbacks to win a Super Bowl after throwing multiple interceptions.",
+    },
+    {
+      image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCIgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzIiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFBMzY2MCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwQjFGM0EiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjgwMCIgZmlsbD0idXJsKCNnMikiLz4KICA8ZyBzdHJva2U9IiMyQzRBNzgiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC42Ij4KICAgIDxsaW5lIHgxPSIwIiB5MT0iMTUwIiB4Mj0iMTIwMCIgeTI9IjE1MCIvPgogICAgPGxpbmUgeDE9IjAiIHkxPSIzMDAiIHgyPSIxMjAwIiB5Mj0iMzAwIi8+CiAgICA8bGluZSB4MT0iMCIgeTE9IjQ1MCIgeDI9IjEyMDAiIHkyPSI0NTAiLz4KICAgIDxsaW5lIHgxPSIwIiB5MT0iNjAwIiB4Mj0iMTIwMCIgeTI9IjYwMCIvPgogICAgPGxpbmUgeDE9IjIwMCIgeTE9IjAiIHgyPSIyMDAiIHkyPSI4MDAiLz4KICAgIDxsaW5lIHgxPSI0NTAiIHkxPSIwIiB4Mj0iNDUwIiB5Mj0iODAwIi8+CiAgICA8bGluZSB4MT0iNzUwIiB5MT0iMCIgeDI9Ijc1MCIgeTI9IjgwMCIvPgogICAgPGxpbmUgeDE9IjEwMDAiIHkxPSIwIiB4Mj0iMTAwMCIgeTI9IjgwMCIvPgogIDwvZz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2MDAsMzMwKSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjQzgxMDJFIiBzdHJva2Utd2lkdGg9IjEwIiBvcGFjaXR5PSIwLjg1Ij4KICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iMCIgcng9IjkwIiByeT0iNTUiLz4KICAgIDxsaW5lIHgxPSItOTAiIHkxPSIwIiB4Mj0iOTAiIHkyPSIwIi8+CiAgPC9nPgogIDx0ZXh0IHg9IjYwMCIgeT0iNDcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiIgbGV0dGVyLXNwYWNpbmc9IjIiPlBMQUNFSE9MREVSIFBIT1RPIOKAlCBST1VORCAyPC90ZXh0PgogIDx0ZXh0IHg9IjYwMCIgeT0iNTE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iI0FFQjlDQyI+UmVwbGFjZSB2aWEgZGF0YS5qcyDigJQgc2VlIFJFQURNRS5tZDwvdGV4dD4KPC9zdmc+Cg==",
+      year: 1990,
+      totalScore: 74,
+      gameDescription:
+        "PLACEHOLDER CONTENT — The San Francisco 49ers rolled to a dominant win behind Joe Montana's precision passing attack.",
+      funFact:
+        "PLACEHOLDER CONTENT — This game is often cited as one of the most lopsided championship performances in NFL history.",
+    },
+    {
+      image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCIgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzMiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzE3MzI1NCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwQjFGM0EiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjgwMCIgZmlsbD0idXJsKCNnMykiLz4KICA8ZyBzdHJva2U9IiMyQzRBNzgiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC42Ij4KICAgIDxsaW5lIHgxPSIwIiB5MT0iMTgwIiB4Mj0iMTIwMCIgeTI9IjE4MCIvPgogICAgPGxpbmUgeDE9IjAiIHkxPSIzNjAiIHgyPSIxMjAwIiB5Mj0iMzYwIi8+CiAgICA8bGluZSB4MT0iMCIgeTE9IjU0MCIgeDI9IjEyMDAiIHkyPSI1NDAiLz4KICAgIDxsaW5lIHgxPSIwIiB5MT0iNzAwIiB4Mj0iMTIwMCIgeTI9IjcwMCIvPgogICAgPGxpbmUgeDE9IjEwMCIgeTE9IjAiIHgyPSIxMDAiIHkyPSI4MDAiLz4KICAgIDxsaW5lIHgxPSIzNTAiIHkxPSIwIiB4Mj0iMzUwIiB5Mj0iODAwIi8+CiAgICA8bGluZSB4MT0iODUwIiB5MT0iMCIgeDI9Ijg1MCIgeTI9IjgwMCIvPgogICAgPGxpbmUgeDE9IjExMDAiIHkxPSIwIiB4Mj0iMTEwMCIgeTI9IjgwMCIvPgogIDwvZz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2MDAsMzMwKSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjQzgxMDJFIiBzdHJva2Utd2lkdGg9IjEwIiBvcGFjaXR5PSIwLjg1Ij4KICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iMCIgcng9IjkwIiByeT0iNTUiLz4KICAgIDxsaW5lIHgxPSItOTAiIHkxPSIwIiB4Mj0iOTAiIHkyPSIwIi8+CiAgPC9nPgogIDx0ZXh0IHg9IjYwMCIgeT0iNDcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiIgbGV0dGVyLXNwYWNpbmc9IjIiPlBMQUNFSE9MREVSIFBIT1RPIOKAlCBST1VORCAzPC90ZXh0PgogIDx0ZXh0IHg9IjYwMCIgeT0iNTE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iI0FFQjlDQyI+UmVwbGFjZSB2aWEgZGF0YS5qcyDigJQgc2VlIFJFQURNRS5tZDwvdGV4dD4KPC9zdmc+Cg==",
+      year: 2017,
+      totalScore: 62,
+      gameDescription:
+        "PLACEHOLDER CONTENT — A back-and-forth shootout featuring a historic overtime comeback that redefined a franchise's legacy.",
+      funFact:
+        "PLACEHOLDER CONTENT — It was the first Super Bowl in NFL history to be decided in overtime.",
+    },
+    {
+      image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCIgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzQiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFEM0E2NiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwQjFGM0EiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjgwMCIgZmlsbD0idXJsKCNnNCkiLz4KICA8ZyBzdHJva2U9IiMyQzRBNzgiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC42Ij4KICAgIDxsaW5lIHgxPSIwIiB5MT0iMTMwIiB4Mj0iMTIwMCIgeTI9IjEzMCIvPgogICAgPGxpbmUgeDE9IjAiIHkxPSIzMjAiIHgyPSIxMjAwIiB5Mj0iMzIwIi8+CiAgICA8bGluZSB4MT0iMCIgeTE9IjUxMCIgeDI9IjEyMDAiIHkyPSI1MTAiLz4KICAgIDxsaW5lIHgxPSIwIiB5MT0iNjYwIiB4Mj0iMTIwMCIgeTI9IjY2MCIvPgogICAgPGxpbmUgeDE9IjI1MCIgeTE9IjAiIHgyPSIyNTAiIHkyPSI4MDAiLz4KICAgIDxsaW5lIHgxPSI1MDAiIHkxPSIwIiB4Mj0iNTAwIiB5Mj0iODAwIi8+CiAgICA8bGluZSB4MT0iNzAwIiB5MT0iMCIgeDI9IjcwMCIgeTI9IjgwMCIvPgogICAgPGxpbmUgeDE9Ijk1MCIgeTE9IjAiIHgyPSI5NTAiIHkyPSI4MDAiLz4KICA8L2c+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNjAwLDMzMCkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0M4MTAyRSIgc3Ryb2tlLXdpZHRoPSIxMCIgb3BhY2l0eT0iMC44NSI+CiAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjAiIHJ4PSI5MCIgcnk9IjU1Ii8+CiAgICA8bGluZSB4MT0iLTkwIiB5MT0iMCIgeDI9IjkwIiB5Mj0iMCIvPgogIDwvZz4KICA8dGV4dCB4PSI2MDAiIHk9IjQ3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRkZGRkYiIGxldHRlci1zcGFjaW5nPSIyIj5QTEFDRUhPTERFUiBQSE9UTyDigJQgUk9VTkQgNDwvdGV4dD4KICA8dGV4dCB4PSI2MDAiIHk9IjUxNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNBRUI5Q0MiPlJlcGxhY2UgdmlhIGRhdGEuanMg4oCUIHNlZSBSRUFETUUubWQ8L3RleHQ+Cjwvc3ZnPgo=",
+      year: 1968,
+      totalScore: 42,
+      gameDescription:
+        "PLACEHOLDER CONTENT — An early-era championship game played in front of a modest crowd during the league's formative years.",
+      funFact:
+        "PLACEHOLDER CONTENT — Ticket prices for this game were a fraction of what fans pay for a Super Bowl seat today.",
+    },
+    {
+      image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCIgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzUiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzE1MzA1MCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwQjFGM0EiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjgwMCIgZmlsbD0idXJsKCNnNSkiLz4KICA8ZyBzdHJva2U9IiMyQzRBNzgiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC42Ij4KICAgIDxsaW5lIHgxPSIwIiB5MT0iMTYwIiB4Mj0iMTIwMCIgeTI9IjE2MCIvPgogICAgPGxpbmUgeDE9IjAiIHkxPSIzNDAiIHgyPSIxMjAwIiB5Mj0iMzQwIi8+CiAgICA8bGluZSB4MT0iMCIgeTE9IjUyMCIgeDI9IjEyMDAiIHkyPSI1MjAiLz4KICAgIDxsaW5lIHgxPSIwIiB5MT0iNjgwIiB4Mj0iMTIwMCIgeTI9IjY4MCIvPgogICAgPGxpbmUgeDE9IjE4MCIgeTE9IjAiIHgyPSIxODAiIHkyPSI4MDAiLz4KICAgIDxsaW5lIHgxPSI0MjAiIHkxPSIwIiB4Mj0iNDIwIiB5Mj0iODAwIi8+CiAgICA8bGluZSB4MT0iNzgwIiB5MT0iMCIgeDI9Ijc4MCIgeTI9IjgwMCIvPgogICAgPGxpbmUgeDE9IjEwMjAiIHkxPSIwIiB4Mj0iMTAyMCIgeTI9IjgwMCIvPgogIDwvZz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2MDAsMzMwKSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjQzgxMDJFIiBzdHJva2Utd2lkdGg9IjEwIiBvcGFjaXR5PSIwLjg1Ij4KICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iMCIgcng9IjkwIiByeT0iNTUiLz4KICAgIDxsaW5lIHgxPSItOTAiIHkxPSIwIiB4Mj0iOTAiIHkyPSIwIi8+CiAgPC9nPgogIDx0ZXh0IHg9IjYwMCIgeT0iNDcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiIgbGV0dGVyLXNwYWNpbmc9IjIiPlBMQUNFSE9MREVSIFBIT1RPIOKAlCBST1VORCA1PC90ZXh0PgogIDx0ZXh0IHg9IjYwMCIgeT0iNTE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iI0FFQjlDQyI+UmVwbGFjZSB2aWEgZGF0YS5qcyDigJQgc2VlIFJFQURNRS5tZDwvdGV4dD4KPC9zdmc+Cg==",
+      year: 2012,
+      totalScore: 45,
+      gameDescription:
+        "PLACEHOLDER CONTENT — A hard-fought defensive battle between two storied franchises came down to the final drive.",
+      funFact:
+        "PLACEHOLDER CONTENT — The winning team's head coach became the youngest to win multiple championships in the modern era.",
+    },
+  ],
+
+  "2026-09-23": [
+    {
+      image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCIgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzIiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFBMzY2MCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwQjFGM0EiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjgwMCIgZmlsbD0idXJsKCNnMikiLz4KICA8ZyBzdHJva2U9IiMyQzRBNzgiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC42Ij4KICAgIDxsaW5lIHgxPSIwIiB5MT0iMTUwIiB4Mj0iMTIwMCIgeTI9IjE1MCIvPgogICAgPGxpbmUgeDE9IjAiIHkxPSIzMDAiIHgyPSIxMjAwIiB5Mj0iMzAwIi8+CiAgICA8bGluZSB4MT0iMCIgeTE9IjQ1MCIgeDI9IjEyMDAiIHkyPSI0NTAiLz4KICAgIDxsaW5lIHgxPSIwIiB5MT0iNjAwIiB4Mj0iMTIwMCIgeTI9IjYwMCIvPgogICAgPGxpbmUgeDE9IjIwMCIgeTE9IjAiIHgyPSIyMDAiIHkyPSI4MDAiLz4KICAgIDxsaW5lIHgxPSI0NTAiIHkxPSIwIiB4Mj0iNDUwIiB5Mj0iODAwIi8+CiAgICA8bGluZSB4MT0iNzUwIiB5MT0iMCIgeDI9Ijc1MCIgeTI9IjgwMCIvPgogICAgPGxpbmUgeDE9IjEwMDAiIHkxPSIwIiB4Mj0iMTAwMCIgeTI9IjgwMCIvPgogIDwvZz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2MDAsMzMwKSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjQzgxMDJFIiBzdHJva2Utd2lkdGg9IjEwIiBvcGFjaXR5PSIwLjg1Ij4KICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iMCIgcng9IjkwIiByeT0iNTUiLz4KICAgIDxsaW5lIHgxPSItOTAiIHkxPSIwIiB4Mj0iOTAiIHkyPSIwIi8+CiAgPC9nPgogIDx0ZXh0IHg9IjYwMCIgeT0iNDcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiIgbGV0dGVyLXNwYWNpbmc9IjIiPlBMQUNFSE9MREVSIFBIT1RPIOKAlCBST1VORCAyPC90ZXh0PgogIDx0ZXh0IHg9IjYwMCIgeT0iNTE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iI0FFQjlDQyI+UmVwbGFjZSB2aWEgZGF0YS5qcyDigJQgc2VlIFJFQURNRS5tZDwvdGV4dD4KPC9zdmc+Cg==",
+      year: 1999,
+      totalScore: 40,
+      gameDescription:
+        "PLACEHOLDER CONTENT — A defense-first showdown that turned on a single fourth-quarter goal-line stand.",
+      funFact:
+        "PLACEHOLDER CONTENT — The losing team came within one yard of forcing overtime.",
+    },
+    {
+      image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCIgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzQiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFEM0E2NiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwQjFGM0EiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjgwMCIgZmlsbD0idXJsKCNnNCkiLz4KICA8ZyBzdHJva2U9IiMyQzRBNzgiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC42Ij4KICAgIDxsaW5lIHgxPSIwIiB5MT0iMTMwIiB4Mj0iMTIwMCIgeTI9IjEzMCIvPgogICAgPGxpbmUgeDE9IjAiIHkxPSIzMjAiIHgyPSIxMjAwIiB5Mj0iMzIwIi8+CiAgICA8bGluZSB4MT0iMCIgeTE9IjUxMCIgeDI9IjEyMDAiIHkyPSI1MTAiLz4KICAgIDxsaW5lIHgxPSIwIiB5MT0iNjYwIiB4Mj0iMTIwMCIgeTI9IjY2MCIvPgogICAgPGxpbmUgeDE9IjI1MCIgeTE9IjAiIHgyPSIyNTAiIHkyPSI4MDAiLz4KICAgIDxsaW5lIHgxPSI1MDAiIHkxPSIwIiB4Mj0iNTAwIiB5Mj0iODAwIi8+CiAgICA8bGluZSB4MT0iNzAwIiB5MT0iMCIgeDI9IjcwMCIgeTI9IjgwMCIvPgogICAgPGxpbmUgeDE9Ijk1MCIgeTE9IjAiIHgyPSI5NTAiIHkyPSI4MDAiLz4KICA8L2c+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNjAwLDMzMCkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0M4MTAyRSIgc3Ryb2tlLXdpZHRoPSIxMCIgb3BhY2l0eT0iMC44NSI+CiAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9IjAiIHJ4PSI5MCIgcnk9IjU1Ii8+CiAgICA8bGluZSB4MT0iLTkwIiB5MT0iMCIgeDI9IjkwIiB5Mj0iMCIvPgogIDwvZz4KICA8dGV4dCB4PSI2MDAiIHk9IjQ3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRkZGRkYiIGxldHRlci1zcGFjaW5nPSIyIj5QTEFDRUhPTERFUiBQSE9UTyDigJQgUk9VTkQgNDwvdGV4dD4KICA8dGV4dCB4PSI2MDAiIHk9IjUxNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNBRUI5Q0MiPlJlcGxhY2UgdmlhIGRhdGEuanMg4oCUIHNlZSBSRUFETUUubWQ8L3RleHQ+Cjwvc3ZnPgo=",
+      year: 2015,
+      totalScore: 52,
+      gameDescription:
+        "PLACEHOLDER CONTENT — A last-second interception at the goal line sealed one of the most talked-about finishes in recent memory.",
+      funFact:
+        "PLACEHOLDER CONTENT — The play call on the final snap is still debated by fans and analysts today.",
+    },
+    {
+      image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCIgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzEiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzE2MzA1QSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwQjFGM0EiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjgwMCIgZmlsbD0idXJsKCNnMSkiLz4KICA8ZyBzdHJva2U9IiMyQzRBNzgiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC42Ij4KICAgIDxsaW5lIHgxPSIwIiB5MT0iMTUwIiB4Mj0iMTIwMCIgeTI9IjE1MCIvPgogICAgPGxpbmUgeDE9IjAiIHkxPSIzMDAiIHgyPSIxMjAwIiB5Mj0iMzAwIi8+CiAgICA8bGluZSB4MT0iMCIgeTE9IjQ1MCIgeDI9IjEyMDAiIHkyPSI0NTAiLz4KICAgIDxsaW5lIHgxPSIwIiB5MT0iNjAwIiB4Mj0iMTIwMCIgeTI9IjYwMCIvPgogICAgPGxpbmUgeDE9IjE1MCIgeTE9IjAiIHgyPSIxNTAiIHkyPSI4MDAiLz4KICAgIDxsaW5lIHgxPSI0MDAiIHkxPSIwIiB4Mj0iNDAwIiB5Mj0iODAwIi8+CiAgICA8bGluZSB4MT0iODAwIiB5MT0iMCIgeDI9IjgwMCIgeTI9IjgwMCIvPgogICAgPGxpbmUgeDE9IjEwNTAiIHkxPSIwIiB4Mj0iMTA1MCIgeTI9IjgwMCIvPgogIDwvZz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2MDAsMzMwKSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjQzgxMDJFIiBzdHJva2Utd2lkdGg9IjEwIiBvcGFjaXR5PSIwLjg1Ij4KICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iMCIgcng9IjkwIiByeT0iNTUiLz4KICAgIDxsaW5lIHgxPSItOTAiIHkxPSIwIiB4Mj0iOTAiIHkyPSIwIi8+CiAgPC9nPgogIDx0ZXh0IHg9IjYwMCIgeT0iNDcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiIgbGV0dGVyLXNwYWNpbmc9IjIiPlBMQUNFSE9MREVSIFBIT1RPIOKAlCBST1VORCAxPC90ZXh0PgogIDx0ZXh0IHg9IjYwMCIgeT0iNTE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iI0FFQjlDQyI+UmVwbGFjZSB2aWEgZGF0YS5qcyDigJQgc2VlIFJFQURNRS5tZDwvdGV4dD4KPC9zdmc+Cg==",
+      year: 1985,
+      totalScore: 46,
+      gameDescription:
+        "PLACEHOLDER CONTENT — A dominant defensive unit shut down one of the most explosive offenses of the decade.",
+      funFact:
+        "PLACEHOLDER CONTENT — Several players from the winning defense would go on to become Hall of Famers.",
+    },
+    {
+      image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCIgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzMiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzE3MzI1NCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwQjFGM0EiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjgwMCIgZmlsbD0idXJsKCNnMykiLz4KICA8ZyBzdHJva2U9IiMyQzRBNzgiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC42Ij4KICAgIDxsaW5lIHgxPSIwIiB5MT0iMTgwIiB4Mj0iMTIwMCIgeTI9IjE4MCIvPgogICAgPGxpbmUgeDE9IjAiIHkxPSIzNjAiIHgyPSIxMjAwIiB5Mj0iMzYwIi8+CiAgICA8bGluZSB4MT0iMCIgeTE9IjU0MCIgeDI9IjEyMDAiIHkyPSI1NDAiLz4KICAgIDxsaW5lIHgxPSIwIiB5MT0iNzAwIiB4Mj0iMTIwMCIgeTI9IjcwMCIvPgogICAgPGxpbmUgeDE9IjEwMCIgeTE9IjAiIHgyPSIxMDAiIHkyPSI4MDAiLz4KICAgIDxsaW5lIHgxPSIzNTAiIHkxPSIwIiB4Mj0iMzUwIiB5Mj0iODAwIi8+CiAgICA8bGluZSB4MT0iODUwIiB5MT0iMCIgeDI9Ijg1MCIgeTI9IjgwMCIvPgogICAgPGxpbmUgeDE9IjExMDAiIHkxPSIwIiB4Mj0iMTEwMCIgeTI9IjgwMCIvPgogIDwvZz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2MDAsMzMwKSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjQzgxMDJFIiBzdHJva2Utd2lkdGg9IjEwIiBvcGFjaXR5PSIwLjg1Ij4KICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iMCIgcng9IjkwIiByeT0iNTUiLz4KICAgIDxsaW5lIHgxPSItOTAiIHkxPSIwIiB4Mj0iOTAiIHkyPSIwIi8+CiAgPC9nPgogIDx0ZXh0IHg9IjYwMCIgeT0iNDcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiIgbGV0dGVyLXNwYWNpbmc9IjIiPlBMQUNFSE9MREVSIFBIT1RPIOKAlCBST1VORCAzPC90ZXh0PgogIDx0ZXh0IHg9IjYwMCIgeT0iNTE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iI0FFQjlDQyI+UmVwbGFjZSB2aWEgZGF0YS5qcyDigJQgc2VlIFJFQURNRS5tZDwvdGV4dD4KPC9zdmc+Cg==",
+      year: 2021,
+      totalScore: 40,
+      gameDescription:
+        "PLACEHOLDER CONTENT — A home-stadium championship appearance made for one of the most unique atmospheres in league history.",
+      funFact:
+        "PLACEHOLDER CONTENT — It was the first time a team played a championship game in its own home stadium.",
+    },
+    {
+      image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCIgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzUiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzE1MzA1MCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwQjFGM0EiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjgwMCIgZmlsbD0idXJsKCNnNSkiLz4KICA8ZyBzdHJva2U9IiMyQzRBNzgiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC42Ij4KICAgIDxsaW5lIHgxPSIwIiB5MT0iMTYwIiB4Mj0iMTIwMCIgeTI9IjE2MCIvPgogICAgPGxpbmUgeDE9IjAiIHkxPSIzNDAiIHgyPSIxMjAwIiB5Mj0iMzQwIi8+CiAgICA8bGluZSB4MT0iMCIgeTE9IjUyMCIgeDI9IjEyMDAiIHkyPSI1MjAiLz4KICAgIDxsaW5lIHgxPSIwIiB5MT0iNjgwIiB4Mj0iMTIwMCIgeTI9IjY4MCIvPgogICAgPGxpbmUgeDE9IjE4MCIgeTE9IjAiIHgyPSIxODAiIHkyPSI4MDAiLz4KICAgIDxsaW5lIHgxPSI0MjAiIHkxPSIwIiB4Mj0iNDIwIiB5Mj0iODAwIi8+CiAgICA8bGluZSB4MT0iNzgwIiB5MT0iMCIgeDI9Ijc4MCIgeTI9IjgwMCIvPgogICAgPGxpbmUgeDE9IjEwMjAiIHkxPSIwIiB4Mj0iMTAyMCIgeTI9IjgwMCIvPgogIDwvZz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2MDAsMzMwKSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjQzgxMDJFIiBzdHJva2Utd2lkdGg9IjEwIiBvcGFjaXR5PSIwLjg1Ij4KICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iMCIgcng9IjkwIiByeT0iNTUiLz4KICAgIDxsaW5lIHgxPSItOTAiIHkxPSIwIiB4Mj0iOTAiIHkyPSIwIi8+CiAgPC9nPgogIDx0ZXh0IHg9IjYwMCIgeT0iNDcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiIgbGV0dGVyLXNwYWNpbmc9IjIiPlBMQUNFSE9MREVSIFBIT1RPIOKAlCBST1VORCA1PC90ZXh0PgogIDx0ZXh0IHg9IjYwMCIgeT0iNTE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iI0FFQjlDQyI+UmVwbGFjZSB2aWEgZGF0YS5qcyDigJQgc2VlIFJFQURNRS5tZDwvdGV4dD4KPC9zdmc+Cg==",
+      year: 1994,
+      totalScore: 43,
+      gameDescription:
+        "PLACEHOLDER CONTENT — Back-to-back championship teams met again in a rematch three years in the making.",
+      funFact:
+        "PLACEHOLDER CONTENT — The MVP of this game had also won the award the previous season.",
+    },
+  ],
+};
+
+  </script>
+  <script>
+/**
+ * SPORTLE — GAME ENGINE
+ * This file contains ALL game logic, UI wiring, scoring, and persistence.
+ * It reads puzzle content from data.js (SPORTLE_DAILY_PUZZLES) and never
+ * hardcodes photos, years, scores, or descriptions itself.
+ *
+ * Nothing in this file should need to change when the Daily content changes.
+ */
+
+(function () {
+  "use strict";
+
+  // ---------------------------------------------------------------------
+  // CONFIG
+  // ---------------------------------------------------------------------
+  const CONFIG = {
+    mode: "daily", // reserved for future "freeplay" mode
+    storageKey: "sportle_progress_v1",
+    roundsPerPuzzle: 5,
+    year: { min: 1890, max: 2026, defaultValue: 1958, maxPoints: 1000, sigma: 8 },
+    points: { min: 0, max: 120, defaultValue: 60, maxPoints: 1000, sigma: 10 },
+    shareUrl: "http://sportle.seven15g.com/",
+  };
+
+  // ---------------------------------------------------------------------
+  // DATE / PUZZLE LOOKUP
+  // ---------------------------------------------------------------------
+
+  // Local (browser) date as "YYYY-MM-DD". Using local date, not UTC, so the
+  // puzzle changes at the player's own midnight.
+  function getTodayDateString() {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const d = String(now.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function daysBetween(dateStrA, dateStrB) {
+    const a = new Date(`${dateStrA}T00:00:00`);
+    const b = new Date(`${dateStrB}T00:00:00`);
+    return Math.round((b.getTime() - a.getTime()) / 86400000);
+  }
+
+  function getDailyPuzzleNumber(dateStr) {
+    return daysBetween(SPORTLE_LAUNCH_DATE, dateStr) + 1;
+  }
+
+  // Looks up the 5 rounds for a given date. If that exact date hasn't been
+  // curated yet in data.js, deterministically falls back to cycling through
+  // whatever dates ARE available, so every visitor on that day still sees
+  // the same 5 rounds as each other (just re-used content). Once you add a
+  // real entry for a date, this fallback stops applying to that date.
+  function loadDailyPuzzle(dateStr) {
+    if (SPORTLE_DAILY_PUZZLES[dateStr]) {
+      return { rounds: SPORTLE_DAILY_PUZZLES[dateStr], isFallback: false, sourceDate: dateStr };
+    }
+    const availableDates = Object.keys(SPORTLE_DAILY_PUZZLES).sort();
+    if (availableDates.length === 0) return null;
+    const dayIndex = Math.floor(new Date(`${dateStr}T00:00:00`).getTime() / 86400000);
+    const idx = ((dayIndex % availableDates.length) + availableDates.length) % availableDates.length;
+    const sourceDate = availableDates[idx];
+    return { rounds: SPORTLE_DAILY_PUZZLES[sourceDate], isFallback: true, sourceDate };
+  }
+
+  // ---------------------------------------------------------------------
+  // SCORING
+  // ---------------------------------------------------------------------
+  // Gaussian-decay curve: near-exact guesses barely lose points, mid-range
+  // misses drop off quickly, and far-off guesses converge to 0. Tune the
+  // "sigma" values in CONFIG to make the game more/less forgiving.
+  function scoreFromDiff(diff, maxPoints, sigma) {
+    const raw = maxPoints * Math.exp(-(diff * diff) / (2 * sigma * sigma));
+    return Math.max(0, Math.round(raw));
+  }
+
+  function calcYearScore(guessYear, actualYear) {
+    return scoreFromDiff(Math.abs(guessYear - actualYear), CONFIG.year.maxPoints, CONFIG.year.sigma);
+  }
+
+  function calcPointsScore(guessPoints, actualPoints) {
+    return scoreFromDiff(Math.abs(guessPoints - actualPoints), CONFIG.points.maxPoints, CONFIG.points.sigma);
+  }
+
+  function calcRoundScore(yearScore, pointsScore) {
+    return yearScore + pointsScore;
+  }
+
+  // ---------------------------------------------------------------------
+  // STATE / PERSISTENCE
+  // ---------------------------------------------------------------------
+  let state = null; // current in-memory progress object
+  let puzzle = null; // { rounds, isFallback, sourceDate }
+  let sliderTouched = { year: false, points: false };
+
+  function freshState(dateStr) {
+    return {
+      date: dateStr,
+      puzzleNumber: getDailyPuzzleNumber(dateStr),
+      currentRoundIndex: 0,
+      roundResults: [], // { yearGuess, pointsGuess, yearScore, pointsScore, roundScore }
+      completed: false,
+    };
+  }
+
+  function saveProgress() {
+    try {
+      localStorage.setItem(CONFIG.storageKey, JSON.stringify(state));
+    } catch (e) {
+      /* localStorage unavailable — game still works, just won't persist */
+    }
+  }
+
+  function loadProgress() {
+    try {
+      const raw = localStorage.getItem(CONFIG.storageKey);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function resetProgressForNewDayIfNeeded(todayStr) {
+    const saved = loadProgress();
+    if (saved && saved.date === todayStr) {
+      state = saved;
+    } else {
+      state = freshState(todayStr);
+      saveProgress();
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // DOM REFERENCES
+  // ---------------------------------------------------------------------
+  const el = {
+    screens: {
+      home: document.getElementById("screen-home"),
+      round: document.getElementById("screen-round"),
+      results: document.getElementById("screen-results"),
+    },
+    dailyBtn: document.getElementById("btn-daily"),
+    dailyStatus: document.getElementById("daily-status"),
+    roundIndicator: document.getElementById("round-indicator"),
+    progressDots: document.getElementById("progress-dots"),
+    photo: document.getElementById("round-photo"),
+    yearSlider: document.getElementById("year-slider"),
+    yearValue: document.getElementById("year-value"),
+    pointsSlider: document.getElementById("points-slider"),
+    pointsValue: document.getElementById("points-value"),
+    submitBtn: document.getElementById("btn-submit"),
+    guessPanel: document.getElementById("guess-panel"),
+    revealPanel: document.getElementById("reveal-panel"),
+    guessYearOut: document.getElementById("guess-year-out"),
+    guessPointsOut: document.getElementById("guess-points-out"),
+    answerYearOut: document.getElementById("answer-year-out"),
+    answerPointsOut: document.getElementById("answer-points-out"),
+    yearScoreOut: document.getElementById("year-score-out"),
+    pointsScoreOut: document.getElementById("points-score-out"),
+    roundScoreOut: document.getElementById("round-score-out"),
+    gameDescriptionOut: document.getElementById("game-description-out"),
+    funFactOut: document.getElementById("fun-fact-out"),
+    nextBtn: document.getElementById("btn-next"),
+    fallbackNotice: document.getElementById("fallback-notice"),
+    resultsTotal: document.getElementById("results-total"),
+    resultsPuzzleLabel: document.getElementById("results-puzzle-label"),
+    recapList: document.getElementById("recap-list"),
+    shareBtn: document.getElementById("btn-share"),
+    homeBtn: document.getElementById("btn-home"),
+  };
+
+  function showScreen(name) {
+    Object.entries(el.screens).forEach(([key, node]) => {
+      node.classList.toggle("active", key === name);
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // HOME SCREEN
+  // ---------------------------------------------------------------------
+  function renderHome() {
+    const todayStr = getTodayDateString();
+    puzzle = loadDailyPuzzle(todayStr);
+    resetProgressForNewDayIfNeeded(todayStr);
+
+    if (!puzzle) {
+      el.dailyBtn.disabled = true;
+      el.dailyStatus.textContent = "No puzzle available yet";
+      return;
+    }
+
+    el.dailyBtn.disabled = false;
+    if (state.completed) {
+      el.dailyStatus.textContent = `Puzzle #${state.puzzleNumber} — Completed. View your results.`;
+    } else if (state.currentRoundIndex > 0) {
+      el.dailyStatus.textContent = `Puzzle #${state.puzzleNumber} — In progress (Round ${state.currentRoundIndex + 1} of ${CONFIG.roundsPerPuzzle})`;
+    } else {
+      el.dailyStatus.textContent = `Puzzle #${state.puzzleNumber}`;
+    }
+  }
+
+  function handleDailyClick() {
+    if (!puzzle) return;
+    if (state.completed) {
+      renderResults();
+      showScreen("results");
+      return;
+    }
+    renderRound(state.currentRoundIndex);
+    showScreen("round");
+  }
+
+  // ---------------------------------------------------------------------
+  // ROUND SCREEN
+  // ---------------------------------------------------------------------
+  function renderProgressDots() {
+    el.progressDots.innerHTML = "";
+    for (let i = 0; i < CONFIG.roundsPerPuzzle; i++) {
+      const dot = document.createElement("span");
+      dot.className = "dot";
+      if (i < state.roundResults.length) dot.classList.add("dot-done");
+      if (i === state.currentRoundIndex) dot.classList.add("dot-current");
+      el.progressDots.appendChild(dot);
+    }
+  }
+
+  function renderRound(index) {
+    const round = puzzle.rounds[index];
+
+    el.roundIndicator.textContent = `ROUND ${index + 1} OF ${CONFIG.roundsPerPuzzle}`;
+    el.photo.src = round.image;
+    el.photo.alt = `NFL photograph for round ${index + 1}`;
+    renderProgressDots();
+
+    el.fallbackNotice.hidden = !puzzle.isFallback;
+
+    // Reset guess controls
+    sliderTouched = { year: false, points: false };
+    el.yearSlider.min = CONFIG.year.min;
+    el.yearSlider.max = CONFIG.year.max;
+    el.yearSlider.step = 1;
+    el.yearSlider.value = CONFIG.year.defaultValue;
+    el.yearSlider.disabled = false;
+    el.yearValue.textContent = CONFIG.year.defaultValue;
+
+    el.pointsSlider.min = CONFIG.points.min;
+    el.pointsSlider.max = CONFIG.points.max;
+    el.pointsSlider.step = 1;
+    el.pointsSlider.value = CONFIG.points.defaultValue;
+    el.pointsSlider.disabled = false;
+    el.pointsValue.textContent = CONFIG.points.defaultValue;
+
+    el.submitBtn.disabled = true;
+    el.submitBtn.classList.remove("active");
+
+    el.guessPanel.hidden = false;
+    el.revealPanel.hidden = true;
+
+    updateNextButtonLabel(index);
+  }
+
+  function updateNextButtonLabel(index) {
+    el.nextBtn.textContent = index === CONFIG.roundsPerPuzzle - 1 ? "SEE RESULTS →" : "NEXT ROUND →";
+  }
+
+  function updateSubmitButtonState() {
+    const ready = sliderTouched.year && sliderTouched.points;
+    el.submitBtn.disabled = !ready;
+    el.submitBtn.classList.toggle("active", ready);
+  }
+
+  function handleYearInput() {
+    sliderTouched.year = true;
+    el.yearValue.textContent = el.yearSlider.value;
+    updateSubmitButtonState();
+  }
+
+  function handlePointsInput() {
+    sliderTouched.points = true;
+    el.pointsValue.textContent = el.pointsSlider.value;
+    updateSubmitButtonState();
+  }
+
+  function animateCount(node, from, to, duration) {
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const value = Math.round(from + (to - from) * eased);
+      node.textContent = value.toLocaleString();
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function recordGuess() {
+    const round = puzzle.rounds[state.currentRoundIndex];
+    const yearGuess = Number(el.yearSlider.value);
+    const pointsGuess = Number(el.pointsSlider.value);
+
+    const yearScore = calcYearScore(yearGuess, round.year);
+    const pointsScore = calcPointsScore(pointsGuess, round.totalScore);
+    const roundScore = calcRoundScore(yearScore, pointsScore);
+
+    const result = { yearGuess, pointsGuess, yearScore, pointsScore, roundScore };
+    state.roundResults[state.currentRoundIndex] = result;
+    saveProgress();
+    return result;
+  }
+
+  function revealAnswer() {
+    const round = puzzle.rounds[state.currentRoundIndex];
+    const result = recordGuess();
+
+    el.yearSlider.disabled = true;
+    el.pointsSlider.disabled = true;
+    el.guessPanel.hidden = true;
+    el.revealPanel.hidden = false;
+
+    el.guessYearOut.textContent = result.yearGuess;
+    el.guessPointsOut.textContent = result.pointsGuess;
+    el.answerYearOut.textContent = round.year;
+    el.answerPointsOut.textContent = round.totalScore;
+
+    el.yearScoreOut.textContent = "0";
+    el.pointsScoreOut.textContent = "0";
+    el.roundScoreOut.textContent = "0";
+    animateCount(el.yearScoreOut, 0, result.yearScore, 700);
+    animateCount(el.pointsScoreOut, 0, result.pointsScore, 700);
+    animateCount(el.roundScoreOut, 0, result.roundScore, 900);
+
+    el.gameDescriptionOut.textContent = round.gameDescription;
+    el.funFactOut.textContent = round.funFact;
+
+    renderProgressDots();
+  }
+
+  function advanceRound() {
+    const isLastRound = state.currentRoundIndex === CONFIG.roundsPerPuzzle - 1;
+    if (isLastRound) {
+      state.completed = true;
+      saveProgress();
+      renderResults();
+      showScreen("results");
+      return;
+    }
+    state.currentRoundIndex += 1;
+    saveProgress();
+    renderRound(state.currentRoundIndex);
+  }
+
+  // ---------------------------------------------------------------------
+  // RESULTS SCREEN
+  // ---------------------------------------------------------------------
+  function computeFinalResults() {
+    const total = state.roundResults.reduce((sum, r) => sum + r.roundScore, 0);
+    return { total, rounds: state.roundResults };
+  }
+
+  function renderResults() {
+    const { total, rounds } = computeFinalResults();
+
+    el.resultsTotal.textContent = "0";
+    animateCount(el.resultsTotal, 0, total, 1200);
+    el.resultsPuzzleLabel.textContent = `Daily Puzzle #${state.puzzleNumber} — ${state.date}`;
+
+    el.recapList.innerHTML = "";
+    rounds.forEach((r, i) => {
+      const card = document.createElement("div");
+      card.className = "recap-card";
+
+      const barPct = Math.round((r.roundScore / 2000) * 100);
+
+      card.innerHTML = `
+        <div class="recap-card-top">
+          <span class="recap-round-label">ROUND ${i + 1}</span>
+          <span class="recap-round-score">${r.roundScore.toLocaleString()} / 2,000</span>
+        </div>
+        <div class="recap-bar"><div class="recap-bar-fill" style="width:${barPct}%"></div></div>
+        <div class="recap-card-detail">
+          <span>Year: +${r.yearScore}</span>
+          <span>Points: +${r.pointsScore}</span>
+        </div>
+      `;
+      el.recapList.appendChild(card);
+    });
+  }
+
+  function buildShareText() {
+    const { total, rounds } = computeFinalResults();
+    const lines = rounds.map((r, i) => `🏈 Round ${i + 1}: ${r.roundScore.toLocaleString()}`);
+    return [
+      "Sportle Daily",
+      `${total.toLocaleString()} / 10,000`,
+      "",
+      ...lines,
+      "",
+      "Can you beat my score?",
+      CONFIG.shareUrl,
+    ].join("\n");
+  }
+
+  async function shareResult() {
+    const text = buildShareText();
+    let copied = false;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      copied = true;
+    } catch (e) {
+      try {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        copied = true;
+      } catch (e2) {
+        copied = false;
+      }
+    }
+
+    if (copied) {
+      const original = "SHARE SCORE";
+      el.shareBtn.textContent = "COPIED!";
+      el.shareBtn.classList.add("copied");
+      setTimeout(() => {
+        el.shareBtn.textContent = original;
+        el.shareBtn.classList.remove("copied");
+      }, 2000);
+    }
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ text, url: CONFIG.shareUrl });
+      } catch (e) {
+        /* user cancelled or share unsupported for this content — clipboard already handled */
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // EVENT WIRING
+  // ---------------------------------------------------------------------
+  function attachHandlers() {
+    el.dailyBtn.addEventListener("click", handleDailyClick);
+    el.homeBtn.addEventListener("click", () => {
+      renderHome();
+      showScreen("home");
+    });
+
+    el.yearSlider.addEventListener("input", handleYearInput);
+    el.pointsSlider.addEventListener("input", handlePointsInput);
+    el.submitBtn.addEventListener("click", () => {
+      if (el.submitBtn.disabled) return;
+      revealAnswer();
+    });
+    el.nextBtn.addEventListener("click", advanceRound);
+    el.shareBtn.addEventListener("click", shareResult);
+  }
+
+  // ---------------------------------------------------------------------
+  // INIT
+  // ---------------------------------------------------------------------
+  function initGame() {
+    attachHandlers();
+    renderHome();
+    showScreen("home");
+  }
+
+  document.addEventListener("DOMContentLoaded", initGame);
+})();
+
+  </script>
 </body>
 </html>
